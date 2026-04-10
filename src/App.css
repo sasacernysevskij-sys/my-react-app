@@ -1,45 +1,91 @@
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #ffffff;
 }
-
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  background: #000000;
+  color: #000000;
+  padding: 15px;
+}
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+.filter {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 15px;
+  padding: 20px;
 }
-
-.block {
-  border: 1px solid #000;
-  padding: 10px;
+.card {
   background: white;
-  text-align: center;
+  padding: 10px;
 }
-
-.block-img {
+.card img {
   width: 100%;
   height: 120px;
   object-fit: contain;
 }
-
-.filter {
-  display: flex;
-  gap: 10px;
-  margin: 20px;
+.price {
+  color: green;
+  font-weight: bold;
 }
-
-.modal {
+.modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  inset: 0;
+  background: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-.modal-content {
-  background: white;
+.modalContent {
+  background: #ffffff;
   padding: 20px;
-  margin: 100px auto;
-  width: 300px;
+  min-width: 300px;
+}
+.cartItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.buyBtn {
+  background: #00ff00;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  margin-top: 10px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+}
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.card {
+  position: relative;
+}
+.card .meta {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 12px;
+  color: #333333;
 }

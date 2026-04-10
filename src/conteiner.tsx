@@ -1,94 +1,60 @@
 import React, { useEffect, useState } from "react";
 import Block from "./block";
-import Pagination from "@mui/material/Pagination";
 
-interface Product {
+type Product = {
   id: number;
   name: string;
   price: number;
   pictureProduct: string;
   type: string;
   brand: string;
-}
-
-interface ApiResponse {
-  data: Product[];
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-}
-
-interface Props {
-  filter: {
-    type: string;
-    brand: string;
-  };
-}
-
-const Container: React.FC<Props> = ({ filter }) => {
+  quantity: number;
+  createdAt?: string;
+};
+export default function Container({
+  filter,
+  onOpenProduct,
+  onAddClick
+}: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const pageSize = 8;
-
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const params = new URLSearchParams();
+    const url =
+      `https://localhost:7154/api/products?page=${page}&pageSize=8` +
+      (filter.type ? `&type=${filter.type}` : "") +
+      (filter.brand ? `&brand=${filter.brand}` : "");
 
-        params.append("page", page.toString());
-        params.append("pageSize", pageSize.toString());
+    fetch(url)
+      .then(r => r.json())
+      .then(d => {
+        setProducts(d.data);
+        setTotalPages(d.totalPages);
+      });
 
-        if (filter.type) params.append("type", filter.type);
-        if (filter.brand) params.append("brand", filter.brand);
-
-        const response = await fetch(
-          `https://localhost:7154/api/products?${params.toString()}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Server error");
-        }
-
-        const data: ApiResponse = await response.json();
-
-        setProducts(data.data);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-
-    fetchProducts();
-  }, [page, filter]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [filter]);
+  }, [filter, page]);
 
   return (
-    <div className="container">
+    <div>
       <div className="grid">
         {products.map(p => (
           <Block
             key={p.id}
-            name={p.name}
-            price={p.price}
-            img={p.pictureProduct || ""}
+            product={p}
+            onClick={() => onOpenProduct(p)}
+            onAddClick={() => onAddClick(p)}   
           />
         ))}
       </div>
-
-      <Pagination
-        count={totalPages}
-        page={page}
-        onChange={(_, val) => setPage(val)}
-        color="primary"
-        sx={{ marginTop: "20px" }}
-      />
+      <div className="pagination">
+        <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+          Prev
+        </button>
+        <span>{page} / {totalPages}</span>
+        <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
+          Next
+        </button>
+      </div>
     </div>
   );
-};
-
-export default Container;
+}

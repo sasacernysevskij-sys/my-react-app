@@ -1,19 +1,29 @@
-import React from "react";
-
-interface BlockProps {
-  name: string;
-  price: number;
-  img: string;
-}
-
-const Block: React.FC<BlockProps> = ({ name, price, img }) => {
+export default function Block({
+  product,
+  onAddClick,
+  onClick
+}: any) {
   return (
-    <div className="block">
-      <img src={img} alt={name} className="block-img" />
-      <h3>{name}</h3>
-      <p>${price.toFixed(2)}</p>
+    <div className="card" onClick={onClick}>
+      <img src={product.pictureProduct} />
+      <h3>{product.name}</h3>
+      <p className="price">{product.price} $</p>
+      <div style={{ fontSize: 12, color: "gray" }}>
+        <div>Stock: {product.quantity}</div>
+        <div>
+          {product.createdAt
+            ? new Date(product.createdAt).toLocaleDateString()
+            : ""}
+        </div>
+      </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onAddClick();
+        }}
+      >
+        Add
+      </button>
     </div>
   );
-};
-
-export default Block;
+}

@@ -1,26 +1,11 @@
 import React, { useState } from "react";
-
-interface FilterProps {
-  onFilter: (criteria: { type: string; brand: string }) => void;
-}
-
-const Filter: React.FC<FilterProps> = ({ onFilter }) => {
+export default function Filter({ onFilter }: any) {
   const [type, setType] = useState("");
   const [brand, setBrand] = useState("");
-
-  const applyFilter = () => {
-    onFilter({ type, brand });
-  };
-
-  const resetFilter = () => {
-    setType("");
-    setBrand("");
-    onFilter({ type: "", brand: "" });
-  };
-
   return (
     <div className="filter">
-      <select value={type} onChange={(e) => setType(e.target.value)}>
+
+      <select onChange={(e) => setType(e.target.value)}>
         <option value="">All Types</option>
         <option value="Laptop">Laptop</option>
         <option value="Smartphone">Smartphone</option>
@@ -34,7 +19,7 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
         <option value="Air Conditioner">Air Conditioner</option>
       </select>
 
-      <select value={brand} onChange={(e) => setBrand(e.target.value)}>
+      <select onChange={(e) => setBrand(e.target.value)}>
         <option value="">All Brands</option>
         <option value="Apple">Apple</option>
         <option value="Samsung">Samsung</option>
@@ -51,11 +36,10 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
         <option value="Meta">Meta</option>
         <option value="LG">LG</option>
       </select>
+      <button onClick={() => onFilter({ type, brand })}>
+        Apply
+      </button>
 
-      <button onClick={applyFilter}>Apply</button>
-      <button onClick={resetFilter}>Reset</button>
     </div>
   );
-};
-
-export default Filter;
+}

@@ -1,61 +1,49 @@
-// src/components/Authorize.tsx
 import React, { useState } from "react";
-interface AuthProps {
-  onLogin: (username: string, password: string) => void;
-  onRegister: (username: string, password: string, bornDate: string) => void;
-}
-
-const Authorize: React.FC<AuthProps> = ({ onLogin, onRegister }) => {
-  const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const [username, setUsername] = useState("");
+export default function Authorize({ onLoginSuccess, onClose }: any) {
+  const [mode, setMode] = useState("login");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [bornDate, setBornDate] = useState("");
-
-  const handleSubmit = () => {
-    if (mode === "login") onLogin(username, password);
-    else onRegister(username, password, bornDate);
+  const [born, setBorn] = useState("");
+  const submit = async () => {
+    const url =
+      mode === "login"
+        ? "https://localhost:7154/api/auth/login"
+        : "https://localhost:7154/api/auth/register";
+    const body =
+      mode === "login"
+        ? { userName, password }
+        : { userName, password, userBornDate: born };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      alert("Error");
+      return;
+    }
+    const data = await res.json();
+    if (mode === "login") {
+      localStorage.setItem("token", data.token);
+      onLoginSuccess(data.userName);
+    }
+    onClose();
   };
-
   return (
-    <>
-      <button className="btn" onClick={() => setOpen(true)}>Авторизация</button>
-      {open && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close" onClick={() => setOpen(false)}>✖</button>
-            <div className="mode-switch">
-              <button onClick={() => setMode("login")}>Login</button>
-              <button onClick={() => setMode("register")}>Register</button>
-            </div>
-            <div className="auth-form">
-              <input 
-                type="text" 
-                placeholder="Username" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-              />
-              <input 
-                type="password" 
-                placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-              />
-              {mode === "register" && (
-                <input 
-                  type="date" 
-                  placeholder="Birth Date" 
-                  value={bornDate} 
-                  onChange={(e) => setBornDate(e.target.value)} 
-                />
-              )}
-              <button onClick={handleSubmit}>{mode === "login" ? "Login" : "Register"}</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    <div className="modalOverlay" onClick={onClose}>
+      <div className="modalContent" onClick={e => e.stopPropagation()}>
+        <button className="closeBtn" onClick={onClose}>✖</button>
+        <h2>{mode}</h2>
+        <input placeholder="User" onChange={e => setUserName(e.target.value)} />
+        <input type="password" placeholder="Pass" onChange={e => setPassword(e.target.value)} />
+        {mode === "register" && (
+          <input type="date" onChange={e => setBorn(e.target.value)} />
+        )}
+        <button onClick={submit}>Submit</button>
+        <p onClick={() => setMode(mode === "login" ? "register" : "login")}>
+          Switch
+        </p>
+      </div>
+    </div>
   );
-};
-
-export default Authorize;
+}
